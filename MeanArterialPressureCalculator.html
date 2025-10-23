@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mean Arterial Pressure (MAP) Calculator & Classifier</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .calculator {
+            background: #f9f9f9;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: .5rem;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: .5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-bottom: 1rem;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: .75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #results {
+            margin-top: 1.5rem;
+            display: none;
+        }
+        .result-text {
+            padding: 1rem;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .classification-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .classification-table th, .classification-table td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .classification-table th {
+            background-color: #343a40;
+            color: white;
+        }
+        .highlight {
+            background-color: #ffc107;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <h2>Mean Arterial Pressure (MAP) Calculator</h2>
+        <form onsubmit="event.preventDefault(); calculateMAP();">
+            <label for="systolic">Systolic Blood Pressure (mmHg):</label>
+            <input type="number" id="systolic" placeholder="e.g., 120" required>
+            
+            <label for="diastolic">Diastolic Blood Pressure (mmHg):</label>
+            <input type="number" id="diastolic" placeholder="e.g., 80" required>
+
+            <button type="submit">Calculate and Classify</button>
+        </form>
+
+        <div id="results">
+            <div class="result-text">
+                <p><strong>Calculated MAP:</strong> <span id="map-value"></span> mmHg</p>
+                <p><strong>Classification:</strong> <span id="map-classification"></span></p>
+            </div>
+
+            <table class="classification-table" id="map-table">
+                <thead>
+                    <tr>
+                        <th>MAP Classification</th>
+                        <th>Range (mmHg)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="map-optimal"><td>Optimal</td><td>&lt; 93.33</td></tr>
+                    <tr id="map-normal"><td>Normal</td><td>93.33 – 99.00</td></tr>
+                    <tr id="map-high-normal"><td>High Normal</td><td>99.01 – 105.67</td></tr>
+                    <tr id="map-g1"><td>Grade 1 Hypertension (Mild)</td><td>105.68 – 119.00</td></tr>
+                    <tr id="map-g2"><td>Grade 2 Hypertension (Moderate)</td><td>119.01 – 132.33</td></tr>
+                    <tr id="map-g3"><td>Grade 3 Hypertension (Severe)</td><td>≥ 132.34</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function calculateMAP() {
+            const sbp = parseInt(document.getElementById('systolic').value);
+            const dbp = parseInt(document.getElementById('diastolic').value);
+            
+            if (isNaN(sbp) || isNaN(dbp) || sbp <= 0 || dbp <= 0 || sbp < dbp) {
+                alert("Please enter valid systolic and diastolic pressures. Systolic must be greater than diastolic.");
+                return;
+            }
+
+            // Clear previous highlights
+            document.querySelectorAll('#map-table tr').forEach(row => {
+                row.classList.remove('highlight');
+            });
+
+            // Calculate MAP
+            const map = (1/3) * sbp + (2/3) * dbp;
+
+            // Classification Logic
+            let classification = '';
+            let rowId = '';
+
+            if (map < 93.33) {
+                classification = 'Optimal';
+                rowId = 'map-optimal';
+            } else if (map <= 99.00) {
+                classification = 'Normal';
+                rowId = 'map-normal';
+            } else if (map <= 105.67) {
+                classification = 'High Normal';
+                rowId = 'map-high-normal';
+            } else if (map <= 119.00) {
+                classification = 'Grade 1 Hypertension (Mild)';
+                rowId = 'map-g1';
+            } else if (map <= 132.33) {
+                classification = 'Grade 2 Hypertension (Moderate)';
+                rowId = 'map-g2';
+            } else { // map >= 132.34
+                classification = 'Grade 3 Hypertension (Severe)';
+                rowId = 'map-g3';
+            }
+
+            // Display results and highlight table
+            document.getElementById('map-value').textContent = map.toFixed(2);
+            document.getElementById('map-classification').textContent = classification;
+            
+            if (rowId) {
+                document.getElementById(rowId).classList.add('highlight');
+            }
+
+            document.getElementById('results').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
