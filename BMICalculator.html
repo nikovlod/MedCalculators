@@ -3,258 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced BMI Calculator</title>
+    <title>We've Moved! - MedCalculator</title>
+    
+    <!-- This meta tag is a fallback for browsers with JavaScript disabled -->
+    <meta http-equiv="refresh" content="5; url=https://medcalculator.pages.dev/">
+    
     <style>
-
-body {
-    margin: 0; /* Removes default browser margin */
-    background-color: #f0f2f5; /* A light background for the whole page */
-}
-.site-header {
-    background-color: #343a40;
-    padding: 1rem 0;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
-}
-.site-header .site-title {
-    color: white;
-    text-decoration: none;
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-
-        .calculator {
-            background: #f9f9f9;
-            padding: 2rem;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f0f2f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .redirect-container {
+            background: #ffffff;
+            padding: 2.5rem 3rem;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 500px;
         }
-        label {
-            display: block;
-            margin-bottom: .5rem;
+        h1 {
+            font-size: 2rem;
+            color: #343a40;
+            margin-top: 0;
+        }
+        p {
+            font-size: 1.1rem;
+            color: #6c757d;
+        }
+        .new-link {
             font-weight: bold;
+            color: #007bff;
+            text-decoration: none;
         }
-        input[type="number"] {
-            width: 100%;
-            padding: .5rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            margin-bottom: 1rem;
+        .new-link:hover {
+            text-decoration: underline;
         }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: .75rem 1.5rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+        .countdown-text {
+            margin-top: 1.5rem;
             font-size: 1rem;
         }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #results {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: #e9ecef;
-            border-radius: 4px;
-        }
-        .term {
-            color: #007bff;
-            text-decoration: underline;
-            cursor: pointer;
+        #countdown {
             font-weight: bold;
-            display: inline-block;
-            margin-top: 1rem;
-            margin-right: 1rem;
-        }
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .popup-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 500px;
-            width: 90%;
-            position: relative;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            color: black;
-        }
-        .popup-close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            cursor: pointer;
-            font-size: 24px;
-            color: #666;
-            line-height: 1;
-        }
-        .popup-title {
-            font-size: 20px;
-            margin-top: 0;
-            color: #333;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-        .popup-body {
-            margin-top: 15px;
-        }
-        .popup-body table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .popup-body th, .popup-body td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
+            font-size: 1.2rem;
         }
     </style>
 </head>
 <body>
 
-<header class="site-header">
-    <a href="index.html" class="site-title">MedCalculator</a>
-</header>
-
-    <div class="calculator">
-        <h2>BMI Calculator</h2>
-        <form onsubmit="event.preventDefault(); calculateBMI();">
-            <label for="weight">Weight (kg):</label>
-            <input type="number" id="weight" step="0.1" placeholder="e.g., 70" required>
-            
-            <label for="height">Height (meters):</label>
-            <input type="number" id="height" step="0.01" placeholder="e.g., 1.75" required>
-
-            <button type="submit">Calculate</button>
-        </form>
-
-        <div id="results" style="display:none;">
-            <h3>Results:</h3>
-            <p><strong>BMI:</strong> <span id="bmi-value"></span> kg/m²</p>
-            <p><strong>Status:</strong> <span id="status-value"></span></p>
-            <p><strong>Ideal Weight Range:</strong> <span id="idealWeight"></span></p>
-        </div>
-
-        <div>
-            <span class="term" data-term="bmi-formula">BMI Formula</span>
-            <span class="term" data-term="bmi-classification">BMI Classification</span>
-        </div>
-    </div>
-
-    <div class="popup-overlay" id="popupOverlay">
-        <div class="popup-content">
-            <span class="popup-close" id="popupClose">×</span>
-            <h3 class="popup-title" id="popupTitle"></h3>
-            <div class="popup-body" id="popupBody"></div>
-        </div>
+    <div class="redirect-container">
+        <h1>We've Moved!</h1>
+        <p>
+            Our website has a new home. If you are not redirected automatically, please click the link below:
+        </p>
+        <p>
+            <a href="https://medcalculator.pages.dev/" class="new-link">https://medcalculator.pages.dev/</a>
+        </p>
+        <p class="countdown-text">
+            Redirecting in <span id="countdown">5</span> seconds...
+        </p>
     </div>
 
     <script>
-        function calculateBMI() {
-            const weight = parseFloat(document.getElementById('weight').value);
-            const height = parseFloat(document.getElementById('height').value);
-            
-            if (isNaN(weight) || weight <= 0 || isNaN(height) || height <= 0) {
-                alert("Please enter valid, positive numbers for weight and height.");
-                return;
-            }
+        (function() {
+            // --- Configuration ---
+            const newUrl = "https://medcalculator.pages.dev/";
+            let secondsLeft = 5; // The countdown time in seconds
 
-            const bmi = weight / (height * height);
-            
-            let status = "";
-            if (bmi < 18.5) {
-                status = "Underweight";
-            } else if (bmi >= 18.5 && bmi <= 24.9) {
-                status = "Normal BMI";
-            } else if (bmi > 24.9 && bmi <= 29.9) {
-                status = "Overweight";
-            } else if (bmi > 29.9 && bmi <= 34.9) {
-                status = "Obesity (1st class)";
-            } else if (bmi > 34.9 && bmi <= 39.9) {
-                status = "Obesity (2nd class)";
-            } else {
-                status = "Morbidly Obese (3rd class)";
-            }
+            // --- Elements ---
+            const countdownElement = document.getElementById('countdown');
 
-            const wt_min = 18.5 * height * height;
-            const wt_max = 24.9 * height * height;
+            // --- Logic ---
+            // Function to perform the redirect
+            const redirectToNewSite = () => {
+                window.location.href = newUrl;
+            };
 
-            document.getElementById('bmi-value').textContent = bmi.toFixed(3);
-            document.getElementById('status-value').textContent = status;
-            document.getElementById('idealWeight').textContent = `${wt_min.toFixed(2)} - ${wt_max.toFixed(2)} kg`;
-            
-            document.getElementById('results').style.display = 'block';
-        }
+            // Set the main timer for the redirection
+            setTimeout(redirectToNewSite, secondsLeft * 1000);
 
-        const termDefinitions = {
-            "bmi-formula": {
-                title: "BMI Formula",
-                definition: `<p>Body Mass Index is calculated by dividing a person's weight in kilograms by the square of their height in meters.</p><img alt="BMI formula showing weight in kg divided by height in meters squared" style="max-width:100%;" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhlCTYiKjzJK_oKyMsmvdfBmKs7LK2HTWLBrcE5luhdeMPwR__QfSaIMgDrFhwRtB7yN_Q2LytCycXkfy5meIoYRLYePXtWUCrRaJZ44osB66XXFe9xzpbAyFY4kXM3bni9ls0kO3Tii5p2OXbksrVRJiXQHA1SAvKb19V_SXcWMJuTOTDE0BA3iHrMUPQ/s200/Screenshot_20250414-114712_Chrome.jpg"/>`
-            },
-            "bmi-classification": {
-                title: "BMI Classification (WHO)",
-                definition: `
-                    <table>
-                        <thead>
-                            <tr><th>BMI (kg/m²)</th><th>Classification</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>&lt;18.5</td><td>Underweight</td></tr>
-                            <tr><td>18.5 – 24.9</td><td>Normal weight</td></tr>
-                            <tr><td>25.0 – 29.9</td><td>Overweight</td></tr>
-                            <tr><td>30.0 – 34.9</td><td>Obesity (Class I)</td></tr>
-                            <tr><td>35.0 – 39.9</td><td>Obesity (Class II)</td></tr>
-                            <tr><td>≥40.0</td><td>Obesity (Class III) / Morbidly Obese</td></tr>
-                        </tbody>
-                    </table>`
-            }
-        };
-
-        const popupOverlay = document.getElementById('popupOverlay');
-        const popupClose = document.getElementById('popupClose');
-        const popupTitle = document.getElementById('popupTitle');
-        const popupBody = document.getElementById('popupBody');
-        const terms = document.querySelectorAll('.term');
-
-        terms.forEach(term => {
-            term.addEventListener('click', function() {
-                const termKey = this.getAttribute('data-term');
-                if (termDefinitions[termKey]) {
-                    popupTitle.textContent = termDefinitions[termKey].title;
-                    popupBody.innerHTML = termDefinitions[termKey].definition;
-                    popupOverlay.style.display = 'flex';
+            // Set an interval to update the countdown display every second
+            const countdownInterval = setInterval(() => {
+                secondsLeft--;
+                if (countdownElement) {
+                    countdownElement.textContent = secondsLeft;
                 }
-            });
-        });
-
-        function closePopup() {
-            popupOverlay.style.display = 'none';
-        }
-
-        popupClose.addEventListener('click', closePopup);
-        popupOverlay.addEventListener('click', function(event) {
-            if (event.target === popupOverlay) {
-                closePopup();
-            }
-        });
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closePopup();
-            }
-        });
+                // Stop the interval when it reaches 0
+                if (secondsLeft <= 0) {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+        })();
     </script>
 
 </body>

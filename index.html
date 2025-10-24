@@ -3,101 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedCalculator - Home</title>
+    <title>We've Moved! - MedCalculator</title>
+    
+    <!-- This meta tag is a fallback for browsers with JavaScript disabled -->
+    <meta http-equiv="refresh" content="5; url=https://medcalculator.pages.dev/">
+    
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.6;
             color: #333;
-            margin: 0;
             background-color: #f0f2f5;
-        }
-        .site-header {
-            background-color: #343a40;
-            padding: 1rem 0;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-        .site-header .site-title {
-            color: white;
-            text-decoration: none;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 1rem 2rem 1rem;
-        }
-        .page-title {
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            color: #495057;
-        }
-        .calculator-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        .calculator-card {
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 2rem; /* Increased padding for better vertical space */
-            text-decoration: none;
-            color: inherit;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
+            height: 100vh;
+            margin: 0;
             text-align: center;
         }
-        .calculator-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        .redirect-container {
+            background: #ffffff;
+            padding: 2.5rem 3rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 500px;
         }
-        .calculator-card h3 {
-            margin: 0;
-            font-size: 1.25rem;
+        h1 {
+            font-size: 2rem;
+            color: #343a40;
+            margin-top: 0;
+        }
+        p {
+            font-size: 1.1rem;
+            color: #6c757d;
+        }
+        .new-link {
+            font-weight: bold;
             color: #007bff;
+            text-decoration: none;
+        }
+        .new-link:hover {
+            text-decoration: underline;
+        }
+        .countdown-text {
+            margin-top: 1.5rem;
+            font-size: 1rem;
+        }
+        #countdown {
+            font-weight: bold;
+            font-size: 1.2rem;
         }
     </style>
 </head>
 <body>
 
-    <header class="site-header">
-        <a href="index.html" class="site-title">MedCalculator</a>
-    </header>
+    <div class="redirect-container">
+        <h1>We've Moved!</h1>
+        <p>
+            Our website has a new home. If you are not redirected automatically, please click the link below:
+        </p>
+        <p>
+            <a href="https://medcalculator.pages.dev/" class="new-link">https://medcalculator.pages.dev/</a>
+        </p>
+        <p class="countdown-text">
+            Redirecting in <span id="countdown">5</span> seconds...
+        </p>
+    </div>
 
-    <main class="container">
-        <h1 class="page-title">Available Medical Calculators</h1>
+    <script>
+        (function() {
+            // --- Configuration ---
+            const newUrl = "https://medcalculator.pages.dev/";
+            let secondsLeft = 5; // The countdown time in seconds
 
-        <div class="calculator-grid">
-            <a href= "PregnancyDateCalculator.html" class="calculator-card">
-                <h3>Pregnancy Due Date Calculator</h3>
-            </a>
-            
-            <a href="BMICalculator.html" class="calculator-card">
-                <h3>BMI Calculator</h3>
-            </a>
+            // --- Elements ---
+            const countdownElement = document.getElementById('countdown');
 
-            <a href="BodySurfaceAreaCalculator.html" class="calculator-card">
-                <h3>Body Surface Area (BSA) Calculator</h3>
-            </a>
+            // --- Logic ---
+            // Function to perform the redirect
+            const redirectToNewSite = () => {
+                window.location.href = newUrl;
+            };
 
-            <a href="HypertensionClassifierBP.html" class="calculator-card">
-                <h3>Hypertension Classifier</h3>
-            </a>
+            // Set the main timer for the redirection
+            setTimeout(redirectToNewSite, secondsLeft * 1000);
 
-            <a href="MeanArterialPressureCalculator.html" class="calculator-card">
-                <h3>Mean Arterial Pressure (MAP) Calculator</h3>
-            </a>
-            
-
-        </div>
-    </main>
+            // Set an interval to update the countdown display every second
+            const countdownInterval = setInterval(() => {
+                secondsLeft--;
+                if (countdownElement) {
+                    countdownElement.textContent = secondsLeft;
+                }
+                // Stop the interval when it reaches 0
+                if (secondsLeft <= 0) {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+        })();
+    </script>
 
 </body>
 </html>

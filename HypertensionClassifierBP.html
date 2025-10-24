@@ -3,240 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hypertension Classifier</title>
+    <title>We've Moved! - MedCalculator</title>
+    
+    <!-- This meta tag is a fallback for browsers with JavaScript disabled -->
+    <meta http-equiv="refresh" content="5; url=https://medcalculator.pages.dev/">
+    
     <style>
-body {
-    margin: 0; /* Removes default browser margin */
-    background-color: #f0f2f5; /* A light background for the whole page */
-}
-.site-header {
-    background-color: #343a40;
-    padding: 1rem 0;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
-}
-.site-header .site-title {
-    color: white;
-    text-decoration: none;
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-        .calculator {
-            background: #f9f9f9;
-            padding: 2rem;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f0f2f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .redirect-container {
+            background: #ffffff;
+            padding: 2.5rem 3rem;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 500px;
         }
-        label {
-            display: block;
-            margin-bottom: .5rem;
+        h1 {
+            font-size: 2rem;
+            color: #343a40;
+            margin-top: 0;
+        }
+        p {
+            font-size: 1.1rem;
+            color: #6c757d;
+        }
+        .new-link {
             font-weight: bold;
+            color: #007bff;
+            text-decoration: none;
         }
-        input[type="number"] {
-            width: 100%;
-            padding: .5rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            margin-bottom: 1rem;
+        .new-link:hover {
+            text-decoration: underline;
         }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: .75rem 1.5rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+        .countdown-text {
+            margin-top: 1.5rem;
             font-size: 1rem;
         }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #results {
-            margin-top: 1.5rem;
-            display: none;
-        }
-        .classification-block {
-            margin-bottom: 2rem;
-        }
-        .result-text {
-            padding: 1rem;
-            background: #e9ecef;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-        }
-        .classification-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .classification-table th, .classification-table td {
-            text-align: left;
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
-        }
-        .classification-table th {
-            background-color: #343a40;
-            color: white;
-        }
-        .highlight {
-            background-color: #ffc107;
+        #countdown {
             font-weight: bold;
+            font-size: 1.2rem;
         }
     </style>
 </head>
 <body>
 
-<header class="site-header">
-    <a href="index.html" class="site-title">MedCalculator</a>
-</header>
-
-    <div class="calculator">
-        <h2>Hypertension Classifier</h2>
-        <form onsubmit="event.preventDefault(); classifyBP();">
-            <label for="systolic">Systolic Blood Pressure (mmHg):</label>
-            <input type="number" id="systolic" placeholder="e.g., 120" required>
-            
-            <label for="diastolic">Diastolic Blood Pressure (mmHg):</label>
-            <input type="number" id="diastolic" placeholder="e.g., 80" required>
-
-            <button type="submit">Classify</button>
-        </form>
-
-        <div id="results">
-            <!-- British Hypertension Society Results -->
-            <div class="classification-block">
-                <h3>British Hypertension Society Classification</h3>
-                <div class="result-text">
-                    <p><strong>Your Classification:</strong> <span id="bhs-result"></span></p>
-                </div>
-                <table class="classification-table" id="bhs-table">
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Systolic (mmHg)</th>
-                            <th>Diastolic (mmHg)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr id="bhs-opt"><td colspan="3"><strong>Blood pressure</strong></td></tr>
-                        <tr id="bhs-optimal"><td>Optimal</td><td>&lt; 120 and</td><td>&lt; 80</td></tr>
-                        <tr id="bhs-normal"><td>Normal</td><td>&lt; 130 and</td><td>&lt; 85</td></tr>
-                        <tr id="bhs-high-normal"><td>High normal</td><td>130–139 and/or</td><td>85–89</td></tr>
-                        <tr id="bhs-hyper"><td colspan="3"><strong>Hypertension</strong></td></tr>
-                        <tr id="bhs-g1"><td>Grade 1 (mild)</td><td>140–159 and/or</td><td>90–99</td></tr>
-                        <tr id="bhs-g2"><td>Grade 2 (moderate)</td><td>160–179 and/or</td><td>100–109</td></tr>
-                        <tr id="bhs-g3"><td>Grade 3 (severe)</td><td>≥ 180 and/or</td><td>≥ 110</td></tr>
-                        <tr id="bhs-iso"><td colspan="3"><strong>Isolated systolic hypertension</strong></td></tr>
-                        <tr id="bhs-isoh1"><td>Grade 1</td><td>140–159 and</td><td>&lt; 90</td></tr>
-                        <tr id="bhs-isoh2"><td>Grade 2</td><td>≥ 160 and</td><td>&lt; 90</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- ACC/AHA Results -->
-            <div class="classification-block">
-                <h3>ACC/AHA Classification</h3>
-                <div class="result-text">
-                    <p><strong>Your Classification:</strong> <span id="aha-result"></span></p>
-                </div>
-                <table class="classification-table" id="aha-table">
-                    <thead>
-                        <tr>
-                            <th>BP Category</th>
-                            <th>Systolic (mmHg)</th>
-                            <th>Diastolic (mmHg)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr id="aha-normal"><td>Normal BP</td><td>&lt; 120 and</td><td>&lt; 80</td></tr>
-                        <tr id="aha-elevated"><td>Elevated BP</td><td>120–129 and</td><td>&lt; 80</td></tr>
-                        <tr id="aha-s1"><td>Stage 1 hypertension</td><td>130–139 or</td><td>80–89</td></tr>
-                        <tr id="aha-s2"><td>Stage 2 hypertension</td><td>≥ 140 or</td><td>≥ 90</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div class="redirect-container">
+        <h1>We've Moved!</h1>
+        <p>
+            Our website has a new home. If you are not redirected automatically, please click the link below:
+        </p>
+        <p>
+            <a href="https://medcalculator.pages.dev/" class="new-link">https://medcalculator.pages.dev/</a>
+        </p>
+        <p class="countdown-text">
+            Redirecting in <span id="countdown">5</span> seconds...
+        </p>
     </div>
 
     <script>
-        function classifyBP() {
-            const sbp = parseInt(document.getElementById('systolic').value);
-            const dbp = parseInt(document.getElementById('diastolic').value);
-            
-            if (isNaN(sbp) || isNaN(dbp) || sbp <= 0 || dbp <= 0 || sbp < dbp) {
-                alert("Please enter valid systolic and diastolic blood pressure values.");
-                return;
-            }
+        (function() {
+            // --- Configuration ---
+            const newUrl = "https://medcalculator.pages.dev/";
+            let secondsLeft = 5; // The countdown time in seconds
 
-            // Clear previous highlights
-            document.querySelectorAll('#bhs-table tr, #aha-table tr').forEach(row => {
-                row.classList.remove('highlight');
-            });
+            // --- Elements ---
+            const countdownElement = document.getElementById('countdown');
 
-            // BHS Classification Logic
-            let bhsCategory = '';
-            let bhsRowId = '';
+            // --- Logic ---
+            // Function to perform the redirect
+            const redirectToNewSite = () => {
+                window.location.href = newUrl;
+            };
 
-            if (sbp >= 180 || dbp >= 110) {
-                bhsCategory = 'Grade 3 (severe) Hypertension';
-                bhsRowId = 'bhs-g3';
-            } else if (sbp >= 160 && dbp < 90) {
-                bhsCategory = 'Isolated Systolic Hypertension (Grade 2)';
-                bhsRowId = 'bhs-isoh2';
-            } else if (sbp >= 160 || dbp >= 100) {
-                bhsCategory = 'Grade 2 (moderate) Hypertension';
-                bhsRowId = 'bhs-g2';
-            } else if (sbp >= 140 && dbp < 90) {
-                bhsCategory = 'Isolated Systolic Hypertension (Grade 1)';
-                bhsRowId = 'bhs-isoh1';
-            } else if (sbp >= 140 || dbp >= 90) {
-                bhsCategory = 'Grade 1 (mild) Hypertension';
-                bhsRowId = 'bhs-g1';
-            } else if (sbp >= 130 || dbp >= 85) {
-                bhsCategory = 'High normal';
-                bhsRowId = 'bhs-high-normal';
-            } else if (sbp < 120 && dbp < 80) {
-                bhsCategory = 'Optimal';
-                bhsRowId = 'bhs-optimal';
-            } else if (sbp < 130 && dbp < 85) {
-                bhsCategory = 'Normal';
-                bhsRowId = 'bhs-normal';
-            } else {
-                 bhsCategory = 'High normal'; // Catches cases like 125/86
-                 bhsRowId = 'bhs-high-normal';
-            }
+            // Set the main timer for the redirection
+            setTimeout(redirectToNewSite, secondsLeft * 1000);
 
-            // ACC/AHA Classification Logic
-            let ahaCategory = '';
-            let ahaRowId = '';
-            
-            if (sbp >= 140 || dbp >= 90) {
-                ahaCategory = 'Stage 2 Hypertension';
-                ahaRowId = 'aha-s2';
-            } else if (sbp >= 130 || dbp >= 80) {
-                ahaCategory = 'Stage 1 Hypertension';
-                ahaRowId = 'aha-s1';
-            } else if (sbp >= 120 && dbp < 80) {
-                ahaCategory = 'Elevated BP';
-                ahaRowId = 'aha-elevated';
-            } else if (sbp < 120 && dbp < 80) {
-                ahaCategory = 'Normal BP';
-                ahaRowId = 'aha-normal';
-            } else {
-                ahaCategory = 'Stage 1 Hypertension'; // Catches cases like 125/82
-                ahaRowId = 'aha-s1';
-            }
-
-            // Display results and highlight tables
-            document.getElementById('bhs-result').textContent = bhsCategory;
-            document.getElementById('aha-result').textContent = ahaCategory;
-            
-            if(bhsRowId) document.getElementById(bhsRowId).classList.add('highlight');
-            if(ahaRowId) document.getElementById(ahaRowId).classList.add('highlight');
-
-            document.getElementById('results').style.display = 'block';
-        }
+            // Set an interval to update the countdown display every second
+            const countdownInterval = setInterval(() => {
+                secondsLeft--;
+                if (countdownElement) {
+                    countdownElement.textContent = secondsLeft;
+                }
+                // Stop the interval when it reaches 0
+                if (secondsLeft <= 0) {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+        })();
     </script>
 
 </body>
